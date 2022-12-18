@@ -23,7 +23,7 @@ class APIFeatures {
             this.query = this.query.sort(sortBy)
         }
         else {
-            this.query.sort('-createdAt')
+            this.query.sort('name')
         }
 
         return this
