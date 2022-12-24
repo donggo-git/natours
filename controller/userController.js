@@ -1,16 +1,19 @@
 const fs = require('fs')
 const users = JSON.parse(fs.readFileSync(`${__dirname}/../dev-data/data/users.json`))
+const User = require('../models/userModel')
+const catchAsync = require('../ultis/catchAsync')
 
-exports.getAllUsers = (req, res) => {
+exports.getAllUsers = catchAsync(async (req, res, next) => {
+    const users = await User.find()
+
     res.status(200).json({
         status: 'success',
-        requestedAt: req.requestTime,
-        results: users.length,
+        results: user.length,
         data: {
             users
         }
     })
-}
+})
 
 exports.createUsers = (req, res) => {
 
