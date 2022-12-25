@@ -1,4 +1,3 @@
-const fs = require('fs')
 const Tour = require('../models/tourModel')
 const APIFeatures = require('../ultis/APIFeatures')
 const catchAsync = require('../ultis/catchAsync')
@@ -10,7 +9,6 @@ exports.aliasTopTours = async (req, res, next) => {
     req.query.fields = 'name,price,ratingAverage,summary,difficulty'
     next()
 }
-
 
 exports.getAllTours = catchAsync(async (req, res) => {
     //EXECUTE QUERY

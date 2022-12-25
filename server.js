@@ -18,7 +18,6 @@ mongoose.connect(DB, {
     useCreateIndex: true,
     useFindAndModify: false
 }).then(con => {
-    console.log(con.connections)
     console.log('DB connection is successful')
 }).catch(err => {
     console.log('ERR')

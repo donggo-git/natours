@@ -112,7 +112,6 @@ tourSchema.pre('find', function (next) {
     next()
 })
 tourSchema.post(/^find/, function (docs, next) {
-    console.log(docs)
     next()
 })
 
