@@ -16,7 +16,8 @@ exports.signup = catchAsync(async (req, res, next) => {
         name: req.body.name,
         email: req.body.email,
         password: req.body.password,
-        passwordConfirm: req.body.passwordConfirm
+        passwordConfirm: req.body.passwordConfirm,
+        role: req.body.role
     })
 
     const token = signToken(newUser._id)
@@ -63,18 +64,38 @@ exports.protect = catchAsync(async (req, res, next) => {
     }
 
     if (!token) return next(new AppError('You are not login! Please login to get access', 401))
+
     //2) Verification the token
     const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET)
-    console.log(decoded)
+
     //3) Check if user still exists
     const freshUser = await User.findById(decoded.id)
     if (!freshUser) return next(new AppError('The user belonging this token does no longer exist', 401))
+
     //4) Check if user changed password after the token was issued
-    if (freshUser.changesPasswordAfter(decoded.iat)) {
-        return next(new AppError('User rencently changed password! Please login again.', 404))
+    if (await freshUser.changedPasswordAfter(decoded.iat)) {
+        return next(new AppError('User recently changed password! Please login again.', 404))
     }
 
     //Grant access to protected route
     req.user = freshUser
     next()
 })
+exports.restrictTo = (...roles) => {
+    return (req, res, next) => {
+        //role []
+        if (!roles.includes(req.user.role)) {
+            return next(new AppError('You do not have permission to perform this action', 403))
+        }
+
+        next()
+    }
+}
+
+exports.forgotPassword = (req, res, next) => {
+
+}
+
+exports.resetPassword = (req, res, next) => {
+
+}
