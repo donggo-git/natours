@@ -11,6 +11,8 @@ router.post('/forgotPassword', authController.forgotPassword)
 router.post('/resetPassword/:token', authController.resetPassword)
 
 router.patch('/updateMyPassword', authController.protect, authController.updatePassword)
+//update user data that's not password
+router.patch('/updateMe', authController.protect, userController.updateMe)
 
 router
     .route('/')

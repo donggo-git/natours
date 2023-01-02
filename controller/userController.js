@@ -2,6 +2,15 @@ const fs = require('fs')
 const users = JSON.parse(fs.readFileSync(`${__dirname}/../dev-data/data/users.json`))
 const User = require('../models/userModel')
 const catchAsync = require('../ultis/catchAsync')
+const AppError = require('./../ultis/appError');
+
+const filterObj = (obj, ...allowedFields) => {
+    const newObj = {};
+    Object.keys(obj).forEach(el => {
+        if (allowedFields.includes(el)) newObj[el] = obj[el];
+    });
+    return newObj;
+};
 
 exports.getAllUsers = catchAsync(async (req, res, next) => {
     const users = await User.find()
@@ -100,3 +109,25 @@ exports.deleteUser = (req, res) => {
         data: null
     })
 }
+
+
+
+exports.updateMe = catchAsync(async (req, res, next) => {
+    // 1) create error if user post password data
+    if (req.body.password || req.body.passwordConfirm)
+        return next(new AppError('this route is not for password update. Please use /updateMyPassword', 404))
+    // 2) update user data
+    const filterBody = filterObj(req.body, 'name', 'email')
+
+    const updatedUser = await User.findByIdAndUpdate(req.user.id, filterBody, {
+        new: true,
+        runValidators: true
+    })
+
+    res.status(200).json({
+        status: 'success',
+        data: {
+            user: updatedUser
+        }
+    })
+})
