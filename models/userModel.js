@@ -53,6 +53,13 @@ userSchema.pre('save', async function (next) {
     next()
 })
 
+userSchema.pre('save', async function (next) {
+    if (!this.isModified('password') || this.isNew) return next();
+
+    this.passwordChangeAt = Date.now()
+    next()
+})
+
 userSchema.methods.correctPassword = async function (candidatePassword, userPassword) {
     return await bcrypt.compare(candidatePassword, userPassword)
 }
@@ -83,6 +90,7 @@ userSchema.methods.createPasswordResetToken = function () {
 
     return resetToken
 }
+
 
 const User = mongoose.model('User', userSchema)
 module.exports = User
