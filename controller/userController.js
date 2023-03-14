@@ -17,7 +17,7 @@ exports.getAllUsers = catchAsync(async (req, res, next) => {
 
     res.status(200).json({
         status: 'success',
-        results: user.length,
+        results: users.length,
         data: {
             users
         }
@@ -61,7 +61,7 @@ exports.getUser = (req, res) => {
     })
 }
 
-exports.updateUser = (req, res) => {
+/*exports.updateUser = (req, res) => {
     const id = req.params.id * 1;
     const orgTour = tours.find(el => el.id === id)
 
@@ -81,7 +81,8 @@ exports.updateUser = (req, res) => {
             tour: '<>'
         }
     })
-}
+}*/
+
 
 exports.deleteUser = (req, res) => {
     const id = req.params.id * 1
@@ -129,5 +130,12 @@ exports.updateMe = catchAsync(async (req, res, next) => {
         data: {
             user: updatedUser
         }
+    })
+})
+exports.deleteMe = catchAsync(async (req, res, next) => {
+    await User.findByIdAndUpdate(req.user.id, { active: false })
+    res.status(204).json({
+        status: 'success',
+        data: null
     })
 })
